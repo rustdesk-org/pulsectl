@@ -1,8 +1,8 @@
 [package]
 name = "rust-pulsectl"
-version = "0.2.11"
+version = "0.2.12"
 authors = ["Kristopher Ruzic <krruzic@gmail.com>"]
-edition = "2018"
+edition = "2021"
 license = "GPL-3.0+"
 description = "A higher level API for libpulse_binding"
 readme = "README.md"
@@ -16,4 +16,4 @@ name = "pulsectl"
 path = "src/lib.rs"
 
 [dependencies]
-libpulse-binding = "2.25"
+libpulse-binding = "2.26"
