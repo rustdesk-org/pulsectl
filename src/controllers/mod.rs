@@ -1,3 +1,4 @@
+
 /// Source = microphone etc. something that takes in audio
 /// Source Output = application consuming that audio
 ///
@@ -96,7 +97,13 @@ impl DeviceControl<DeviceInfo> for SinkController {
     fn get_default_device(&mut self) -> Result<DeviceInfo, ControllerError> {
         let server_info = self.get_server_info();
         match server_info {
-            Ok(info) => self.get_device_by_name(info.default_sink_name.unwrap().as_ref()),
+            Ok(info) => {
+                let name = info.default_sink_name.ok_or(ControllerError::new(
+                    GetInfoError,
+                    "The server reports no default sink",
+                ))?;
+                self.get_device_by_name(name.as_ref())
+            }
             Err(e) => Err(e),
         }
     }
@@ -362,7 +369,13 @@ impl DeviceControl<DeviceInfo> for SourceController {
     fn get_default_device(&mut self) -> Result<DeviceInfo, ControllerError> {
         let server_info = self.get_server_info();
         match server_info {
-            Ok(info) => self.get_device_by_name(info.default_sink_name.unwrap().as_ref()),
+            Ok(info) => {
+                let name = info.default_source_name.ok_or(ControllerError::new(
+                    GetInfoError,
+                    "The server reports no default source",
+                ))?;
+                self.get_device_by_name(name.as_ref())
+            }
             Err(e) => Err(e),
         }
     }
@@ -581,7 +594,7 @@ impl AppControl<ApplicationInfo> for SourceController {
     fn set_app_mute(&mut self, index: u32, mute: bool) -> Result<bool, ControllerError> {
         let success = Rc::new(RefCell::new(false));
         let success_ref = success.clone();
-        let op = self.handler.introspect.set_source_mute_by_index(
+        let op = self.handler.introspect.set_source_output_mute(
             index,
             mute,
             Some(Box::new(move |res| {
