@@ -1,3 +1,4 @@
+
 /// `pulsectl` is a high level wrapper around the PulseAudio bindings supplied by
 /// `libpulse_binding`. It provides simple access to sinks, inputs, sources and outputs allowing
 /// one to write audio control programs with ease.
@@ -62,10 +63,19 @@ fn connect_error(err: &str) -> PulseCtlError {
 
 impl Handler {
     pub fn connect(name: &str) -> Result<Handler, PulseCtlError> {
-        let mut proplist = Proplist::new().unwrap();
+        // libpulse-binding converts strings to CStrings internally.
+        if name.as_bytes().contains(&0) {
+            return Err(connect_error(
+                "Application name contains a NUL byte",
+            ));
+        }
+
+        let mut proplist = Proplist::new()
+            .ok_or_else(|| connect_error("Failed to create property list"))?;
+
         proplist
             .set_str(pulse::proplist::properties::APPLICATION_NAME, name)
-            .unwrap();
+            .map_err(|_| connect_error("Failed to set application name"))?;
 
         let mainloop;
         if let Some(m) = Mainloop::new() {
