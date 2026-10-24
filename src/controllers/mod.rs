@@ -489,7 +489,7 @@ impl DeviceControl<DeviceInfo> for SourceController {
 }
 
 impl AppControl<ApplicationInfo> for SourceController {
-    fn list_applications(&mut self) -> Result<Vec<ApplicationInfo, ControllerError> {
+    fn list_applications(&mut self) -> Result<Vec<ApplicationInfo>, ControllerError> {
         let list = Rc::new(RefCell::new(Some(Vec::new())));
         let list_ref = list.clone();
 
