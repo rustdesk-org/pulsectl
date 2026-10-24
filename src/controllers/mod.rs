@@ -362,7 +362,7 @@ impl DeviceControl<DeviceInfo> for SourceController {
     fn get_default_device(&mut self) -> Result<DeviceInfo, ControllerError> {
         let server_info = self.get_server_info();
         match server_info {
-            Ok(info) => self.get_device_by_name(info.default_sink_name.unwrap().as_ref()),
+            Ok(info) => self.get_device_by_name(info.default_source_name.unwrap().as_ref()),
             Err(e) => Err(e),
         }
     }
